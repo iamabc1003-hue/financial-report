@@ -168,10 +168,10 @@ table tr:hover { background: #f8f9fb; }
       <tbody>
         <tr><td>Golf King</td><td>273</td><td>102</td><td style="color:#2ec4b6">171</td><td>62.6%</td></tr>
         <tr><td>MiniGolf King</td><td>137</td><td>76</td><td style="color:#2ec4b6">61</td><td>44.5%</td></tr>
-        <tr><td>Project Aegis (개발협력)</td><td>822</td><td>998</td><td style="color:#e94560">-176</td><td>-21.4%</td></tr>
+        <tr><td>Project Aegis (개발협력)</td><td>822</td><td>822</td><td style="color:#2ec4b6">0.4</td><td>0.0%</td></tr>
         <tr><td>Project EL</td><td>0</td><td>0</td><td>0</td><td>-</td></tr>
         <tr><td>Defense Derby</td><td>0</td><td>0</td><td>0</td><td>-</td></tr>
-        <tr><td>기타</td><td>90</td><td>-54</td><td style="color:#2ec4b6">144</td><td>-</td></tr>
+        <tr><td>기타 (배부비용 등)</td><td>90</td><td>122</td><td style="color:#e94560">-32</td><td>-</td></tr>
         <tr style="font-weight:700;background:#f0fdf4"><td>합계</td><td>1,322</td><td>1,122</td><td style="color:#2ec4b6">200</td><td>15.1%</td></tr>
       </tbody>
     </table>
@@ -377,7 +377,7 @@ new Chart(document.getElementById('projectBarChart'), {
     labels: ['Golf King', 'MiniGolf King', 'Project Aegis', '기타'],
     datasets: [
       { label: '매출', data: [273, 137, 822, 90], backgroundColor: colors.blue },
-      { label: '영업이익', data: [171, 61, -176, 144], backgroundColor: [colors.teal, colors.teal, colors.pink, colors.teal] }
+      { label: '영업이익', data: [171, 61, 0.4, -32], backgroundColor: [colors.teal, colors.teal, colors.teal, colors.pink] }
     ]
   },
   options: {
