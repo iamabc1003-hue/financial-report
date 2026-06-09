@@ -3,291 +3,940 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RisingWings 재무리포트 - 2026년 4월</title>
+<title>RisingWings 재무리포트</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f0f2f5;color:#333}
-.header{background:linear-gradient(135deg,#16213e,#0f3460);color:#fff;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.header h1{font-size:1.6em;font-weight:700}
-.header .meta{font-size:0.85em;opacity:0.85;text-align:right}
-.tab-bar{display:flex;background:#fff;border-bottom:2px solid #e0e0e0;padding:0 16px;position:sticky;top:0;z-index:100}
-.tab-btn{padding:14px 28px;border:none;background:none;font-size:1em;font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
-.tab-btn.active{color:#0f3460;border-bottom-color:#4361ee}
-.tab-btn:hover{color:#0f3460;background:#f8f9ff}
-.tab-content{display:none;padding:24px;max-width:1400px;margin:0 auto}
-.tab-content.active{display:block}
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.kpi-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.kpi-card .label{font-size:.85em;color:#888;margin-bottom:4px}
-.kpi-card .value{font-size:1.8em;font-weight:700}
-.kpi-card .change{font-size:.85em;margin-top:4px;font-weight:600}
-.kpi-card .change.up{color:#2ec4b6}
-.kpi-card .change.down{color:#e94560}
-.section{background:#fff;border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.section h3{font-size:1.1em;font-weight:700;color:#16213e;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #f0f2f5}
-.summary-text{font-size:.95em;line-height:1.7;color:#444;margin-bottom:16px}
-.insight-list{list-style:none;padding:0}
-.insight-list li{padding:8px 0 8px 20px;position:relative;font-size:.9em;line-height:1.5;border-bottom:1px solid #f5f5f5}
-.insight-list li::before{content:'▸';position:absolute;left:0;color:#4361ee}
-.chart-container{position:relative;height:350px;margin:16px 0}
-.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-table{width:100%;border-collapse:collapse;font-size:.85em}
-th{background:#f8f9ff;padding:10px 12px;text-align:right;font-weight:600;color:#16213e;border-bottom:2px solid #e0e0e0}
-td{padding:8px 12px;text-align:right;border-bottom:1px solid #f0f2f5}
-th:first-child,td:first-child{text-align:left}
-tr:hover td{background:#fafbff}
-.positive{color:#2ec4b6;font-weight:600}
-.negative{color:#e94560;font-weight:600}
-.flow-viz{display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;flex-wrap:wrap;font-size:.95em}
-.flow-box{background:#f0f4ff;border-radius:10px;padding:16px 20px;text-align:center;min-width:120px}
-.flow-box .fv-label{font-size:.8em;color:#888}
-.flow-box .fv-val{font-size:1.4em;font-weight:700;color:#16213e}
-.flow-arrow{font-size:1.5em;color:#4361ee;font-weight:700}
-@media(max-width:768px){
-.kpi-row{grid-template-columns:repeat(2,1fr)}
-.chart-row{grid-template-columns:1fr}
-.header{flex-direction:column;text-align:center}
-.header .meta{text-align:center;margin-top:8px}
-.tab-btn{padding:10px 16px;font-size:.9em}
-}
-@media print{
-.tab-content{display:block!important}
-.tab-bar{display:none}
-.section{break-inside:avoid}
-}
+  :root {
+    --positive: #2ec4b6;
+    --negative: #e94560;
+    --primary: #4361ee;
+    --secondary: #f72585;
+    --tertiary: #2ec4b6;
+    --quaternary: #7c3aed;
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-light: #6b7280;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+
+  header {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+    color: white;
+    padding: 28px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.3px; }
+  header .meta { font-size: 0.85rem; opacity: 0.75; margin-top: 4px; }
+  header .badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: #16213e;
+    padding: 0 32px;
+  }
+  .tab {
+    padding: 12px 24px;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active { color: white; border-bottom-color: #f72585; }
+  .tab:hover:not(.active) { color: rgba(255,255,255,0.8); }
+
+  .tab-content { display: none; padding: 28px 32px; }
+  .tab-content.active { display: block; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .kpi-label { font-size: 0.78rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .kpi-value { font-size: 1.7rem; font-weight: 700; line-height: 1; }
+  .kpi-change { font-size: 0.8rem; margin-top: 6px; font-weight: 500; }
+  .pos { color: var(--positive); }
+  .neg { color: var(--negative); }
+  .neutral { color: var(--text-light); }
+
+  .section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  .section h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary-box {
+    background: linear-gradient(135deg, #f8f9ff 0%, #fff0f5 100%);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .summary-box p { margin-bottom: 4px; }
+  .summary-box strong { color: var(--primary); }
+
+  .issues-list { list-style: none; }
+  .issues-list li {
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .issues-list li::before { content: '•'; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .issues-list li.warn { background: #fff7ed; color: #92400e; }
+  .issues-list li.warn::before { color: #f59e0b; }
+  .issues-list li.good { background: #f0fdf4; color: #14532d; }
+  .issues-list li.good::before { color: var(--positive); }
+  .issues-list li.info { background: #eff6ff; color: #1e3a8a; }
+  .issues-list li.info::before { color: var(--primary); }
+
+  .chart-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-wrapper { position: relative; }
+  canvas { max-height: 280px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  th {
+    background: #f8f9fa;
+    padding: 10px 12px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    border-bottom: 2px solid var(--border);
+  }
+  th:first-child { text-align: left; }
+  td {
+    padding: 10px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  td:first-child { text-align: left; font-weight: 600; }
+  tr:last-child td { border-bottom: none; font-weight: 700; background: #f8f9fa; }
+  .val-pos { color: var(--positive); font-weight: 600; }
+  .val-neg { color: var(--negative); font-weight: 600; }
+
+  .flow-viz {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 16px 0;
+    flex-wrap: wrap;
+  }
+  .flow-box {
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 10px;
+    min-width: 110px;
+  }
+  .flow-box.carry { background: #eff6ff; border: 2px solid #bfdbfe; }
+  .flow-box.inflow { background: #f0fdf4; border: 2px solid #bbf7d0; }
+  .flow-box.outflow { background: #fef2f2; border: 2px solid #fecaca; }
+  .flow-box.result { background: linear-gradient(135deg, #16213e, #0f3460); color: white; border: none; }
+  .flow-box .fb-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.7; }
+  .flow-box .fb-value { font-size: 1.35rem; font-weight: 700; }
+  .flow-box .fb-unit { font-size: 0.75rem; opacity: 0.6; margin-top: 2px; }
+  .flow-arrow { font-size: 1.5rem; color: var(--text-light); padding: 0 8px; }
+
+  .lti-note {
+    background: #fff7ed;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    color: #92400e;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 768px) {
+    header { padding: 20px; }
+    .tabs { padding: 0 16px; overflow-x: auto; }
+    .tab-content { padding: 16px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid-2 { grid-template-columns: 1fr; }
+    .flow-viz { gap: 4px; }
+  }
+
+  @media print {
+    .tabs { display: none; }
+    .tab-content { display: block !important; page-break-before: always; }
+    .tab-content:first-of-type { page-break-before: auto; }
+  }
 </style>
 </head>
 <body>
-<div class="header">
-<h1>📊 RisingWings 재무리포트</h1>
-<div class="meta">기준: 2026년 4월 | 생성: 2026.06.01<br>출처: Confluence Cash Flow / OneDrive P&L</div>
-</div>
-<div class="tab-bar">
-<button class="tab-btn active" onclick="switchTab('pnl')">P&L 손익</button>
-<button class="tab-btn" onclick="switchTab('cf')">Cash Flow 자금수지</button>
+
+<header>
+  <div>
+    <h1>🚀 RisingWings 재무리포트</h1>
+    <div class="meta">생성일: 2026년 6월 9일 | 자동생성 (Confluence + OneDrive)</div>
+  </div>
+  <div class="badge">📊 기준월: 2026년 4월 (P&L) · 2026년 5월 (Cash Flow)</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('pl')">📈 P&L 손익</div>
+  <div class="tab" onclick="showTab('cf')">💰 Cash Flow 자금수지</div>
 </div>
 
-<!-- P&L TAB -->
-<div id="pnl" class="tab-content active">
-<div class="kpi-row">
-<div class="kpi-card"><div class="label">매출</div><div class="value">12.4억</div><div class="change down">▼ 6.0% vs 전월</div></div>
-<div class="kpi-card"><div class="label">비용</div><div class="value">10.2억</div><div class="change down">▼ 9.1% vs 전월</div></div>
-<div class="kpi-card"><div class="label">영업이익</div><div class="value">2.2억</div><div class="change up">▲ 11.5% vs 전월</div></div>
-<div class="kpi-card"><div class="label">영업이익률</div><div class="value">17.9%</div><div class="change up">▲ 2.8%p vs 전월</div></div>
-</div>
-<div class="section">
-<h3>핵심 요약</h3>
-<p class="summary-text">2026년 4월 RisingWings 법인 매출은 12.4억원으로 전월(13.2억) 대비 6.0% 감소했으나, 비용이 10.2억원으로 전월(11.2억) 대비 9.1% 감소하여 영업이익은 2.2억원으로 전월(2.0억) 대비 11.5% 증가함. 영업이익률은 17.9%로 3개월 연속 개선 추세 유지.</p>
-</div>
-<div class="section">
-<h3>특이사항 및 분석</h3>
-<ul class="insight-list">
-<li>1월 영업이익 -40.7억은 퇴직급여 일시 인식(41.3억) 등 비경상 비용 반영 결과이며, 2월부터 정상 수준 회복</li>
-<li>GOLF KING 매출 1.4억으로 전월(2.0억) 대비 33.4% 하락 — 광고매출 감소가 주요인</li>
-<li>MINIGOLF KING 영업이익률 73.8%로 전 프로젝트 중 최고 수익성 기록</li>
-<li>Project A 내부거래매출 9.8억으로 전월(9.7억) 대비 소폭 증가, 안정적 수준 유지</li>
-<li>마케팅비 22백만원으로 전월(60백만) 대비 대폭 감소 — 비용 효율화 기여</li>
-</ul>
-</div>
-<div class="section">
-<h3>법인 손익 추이 (최근 6개월)</h3>
-<div class="chart-container"><canvas id="corpChart"></canvas></div>
-</div>
-<div class="section">
-<h3>영업이익률 추이</h3>
-<div class="chart-container" style="height:250px"><canvas id="marginChart"></canvas></div>
-</div>
-<div class="section">
-<h3>월별 법인손익 상세 (단위: 백만원)</h3>
-<div style="overflow-x:auto">
-<table>
-<thead><tr><th>구분</th><th>'25.11</th><th>'25.12</th><th>'26.1</th><th>'26.2</th><th>'26.3</th><th>'26.4</th></tr></thead>
-<tbody>
-<tr><td>매출</td><td>1,227</td><td>1,329</td><td>1,232</td><td>1,159</td><td>1,322</td><td>1,243</td></tr>
-<tr><td>　모바일</td><td>285</td><td>256</td><td>340</td><td>253</td><td>275</td><td>217</td></tr>
-<tr><td>　내부거래</td><td>895</td><td>1,005</td><td>822</td><td>855</td><td>972</td><td>976</td></tr>
-<tr><td>　광고/기타</td><td>46</td><td>68</td><td>71</td><td>51</td><td>75</td><td>49</td></tr>
-<tr><td>비용</td><td>1,274</td><td>1,463</td><td>5,303</td><td>962</td><td>1,122</td><td>1,020</td></tr>
-<tr><td>　직접비</td><td>816</td><td>761</td><td>4,851</td><td>517</td><td>594</td><td>552</td></tr>
-<tr><td>　배부비용</td><td>372</td><td>602</td><td>356</td><td>396</td><td>459</td><td>452</td></tr>
-<tr style="font-weight:700;border-top:2px solid #16213e"><td>영업이익</td>
-<td class="negative">-47</td><td class="negative">-134</td><td class="negative">-4,071</td>
-<td class="positive">197</td><td class="positive">200</td><td class="positive">223</td></tr>
-<tr><td>영업이익률</td><td class="negative">-3.8%</td><td class="negative">-10.1%</td><td class="negative">-330.4%</td><td class="positive">17.0%</td><td class="positive">15.1%</td><td class="positive">17.9%</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section">
-<h3>프로젝트별 손익 (2026년 4월, 백만원)</h3>
-<div class="chart-row">
-<div><div class="chart-container"><canvas id="projChart"></canvas></div></div>
-<div style="overflow-x:auto">
-<table>
-<thead><tr><th>프로젝트</th><th>매출</th><th>비용</th><th>영업이익</th><th>이익률</th></tr></thead>
-<tbody>
-<tr><td>Project A</td><td>976</td><td>920</td><td class="positive">56</td><td>5.7%</td></tr>
-<tr><td>GOLF KING</td><td>136</td><td>65</td><td class="positive">72</td><td>52.7%</td></tr>
-<tr><td>MINIGOLF KING</td><td>130</td><td>34</td><td class="positive">96</td><td>73.8%</td></tr>
-<tr><td>Project EL</td><td>0</td><td>1</td><td class="negative">-1</td><td>-</td></tr>
-<tr style="font-weight:700;border-top:2px solid #16213e"><td>합계</td><td>1,243</td><td>1,020</td><td class="positive">223</td><td>17.9%</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="section">
-<h3>주요 프로젝트 영업이익 추이 (2026년)</h3>
-<div class="chart-container"><canvas id="projTrendChart"></canvas></div>
-</div>
+<!-- ===== P&L 탭 ===== -->
+<div id="tab-pl" class="tab-content active">
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">매출 (26년 4월)</div>
+      <div class="kpi-value">12.4억</div>
+      <div class="kpi-change neg">▼ 6.0% vs 전월 (13.2억)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">비용 (26년 4월)</div>
+      <div class="kpi-value">10.2억</div>
+      <div class="kpi-change pos">▼ 9.1% vs 전월 (11.2억)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">영업이익 (26년 4월)</div>
+      <div class="kpi-value pos">+2.2억</div>
+      <div class="kpi-change pos">▲ 11.5% vs 전월 (+2.0억)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">영업이익률 (26년 4월)</div>
+      <div class="kpi-value pos">17.9%</div>
+      <div class="kpi-change pos">▲ +2.8%p vs 전월 (15.1%)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>핵심 요약</h3>
+    <div class="summary-box">
+      <p>26년 4월 법인 영업이익 <strong>223백만원(17.9%)</strong>으로 3개월 연속 흑자 기조 유지. 매출은 전월 대비 -79백만원(-6.0%) 소폭 감소했으나, 비용 절감(-102백만원)으로 영업이익은 오히려 +23백만원 개선.</p>
+      <p style="margin-top:6px;">26년 1월 영업이익 -4,071백만원은 <strong>LTI(장기성과급) 4,127백만원 일시 인식</strong>에 기인하며, LTI 제외 시 실질 영업이익 +56백만원. 2~4월은 정상 영업 기준 지속 흑자.</p>
+    </div>
+    <ul class="issues-list">
+      <li class="good">개발협력(내부거래) 매출이 26.4월 976백만원으로 전체 매출의 78.5% 차지 — 수익 기반의 핵심 축.</li>
+      <li class="good">MINIGOLF KING 4월 영업이익 96백만원으로 개별 게임 중 최고, GOLF KING도 72백만원 안정적 수익 지속.</li>
+      <li class="warn">모바일 게임 직접매출 217백만원으로 전월 275백만원 대비 -21% 감소 — GOLF KING 매출 하락(205→136백만원) 주요인.</li>
+      <li class="warn">Defense Derby 26년 이후 매출 0 — 서비스 종료 또는 운영 최소화 상태. 중장기 포트폴리오 리밸런싱 필요.</li>
+      <li class="info">26년 연초 LTI 4,127백만원 일시 인식으로 YTD 영업이익 -3,451백만원 — 향후 정규 영업은 흑자 기조로 회복 중.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>법인 손익 추이 (최근 6개월, 백만원)</h3>
+    <div class="lti-note">⚠️ 26년 1월: LTI(장기성과급) 4,127백만원 일시 인식 포함. 차트에서 LTI 제외 조정값 별도 표시.</div>
+    <canvas id="plTrendChart"></canvas>
+  </div>
+
+  <div class="chart-grid-2">
+    <div class="section">
+      <h3>영업이익률 추이 (%)</h3>
+      <canvas id="plMarginChart"></canvas>
+    </div>
+    <div class="section">
+      <h3>매출 구성 (26년 4월)</h3>
+      <canvas id="revMixChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>월별 손익 상세 (백만원)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>25년 11월</th>
+          <th>25년 12월</th>
+          <th>26년 1월*</th>
+          <th>26년 2월</th>
+          <th>26년 3월</th>
+          <th>26년 4월</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>매출</td>
+          <td>1,227</td>
+          <td>1,329</td>
+          <td>1,232</td>
+          <td>1,159</td>
+          <td>1,322</td>
+          <td>1,243</td>
+        </tr>
+        <tr>
+          <td>└ 모바일</td>
+          <td>285</td>
+          <td>256</td>
+          <td>340</td>
+          <td>253</td>
+          <td>275</td>
+          <td>217</td>
+        </tr>
+        <tr>
+          <td>└ 내부거래</td>
+          <td>895</td>
+          <td>1,005</td>
+          <td>822</td>
+          <td>855</td>
+          <td>972</td>
+          <td>976</td>
+        </tr>
+        <tr>
+          <td>└ 광고/기타</td>
+          <td>47</td>
+          <td>68</td>
+          <td>70</td>
+          <td>51</td>
+          <td>75</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td>비용</td>
+          <td>1,274</td>
+          <td>1,463</td>
+          <td>5,303</td>
+          <td>962</td>
+          <td>1,122</td>
+          <td>1,020</td>
+        </tr>
+        <tr>
+          <td>└ (LTI 포함)</td>
+          <td>—</td>
+          <td>—</td>
+          <td>(4,127)</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>영업이익</td>
+          <td class="val-neg">-47</td>
+          <td class="val-neg">-134</td>
+          <td class="val-neg">-4,071</td>
+          <td class="val-pos">197</td>
+          <td class="val-pos">200</td>
+          <td class="val-pos">223</td>
+        </tr>
+        <tr>
+          <td>영업이익률</td>
+          <td class="val-neg">-3.8%</td>
+          <td class="val-neg">-10.1%</td>
+          <td class="val-neg">-330%</td>
+          <td class="val-pos">17.0%</td>
+          <td class="val-pos">15.1%</td>
+          <td class="val-pos">17.9%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.75rem; color:var(--text-light); margin-top:8px;">* 26년 1월: LTI 4,127백만원 일시 인식. LTI 제외 정규 영업이익 +56백만원(4.5%).</p>
+  </div>
+
+  <div class="section">
+    <h3>프로젝트별 영업이익 (26년 4월, 백만원)</h3>
+    <div class="chart-grid-2">
+      <canvas id="projectBarChart"></canvas>
+      <canvas id="projectTrendChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>프로젝트별 손익 상세 (26년, 백만원)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>프로젝트</th>
+          <th>유형</th>
+          <th>26년 1월</th>
+          <th>26년 2월</th>
+          <th>26년 3월</th>
+          <th>26년 4월</th>
+          <th>비고</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GOLF KING</td>
+          <td>기타</td>
+          <td class="val-pos">158</td>
+          <td class="val-pos">74</td>
+          <td class="val-pos">84</td>
+          <td class="val-pos">72</td>
+          <td>안정적 수익</td>
+        </tr>
+        <tr>
+          <td>MINIGOLF KING</td>
+          <td>기타</td>
+          <td class="val-pos">55</td>
+          <td class="val-pos">57</td>
+          <td class="val-pos">74</td>
+          <td class="val-pos">96</td>
+          <td>성장세</td>
+        </tr>
+        <tr>
+          <td>개발협력 기여</td>
+          <td>HQ 추진</td>
+          <td>—</td>
+          <td class="val-pos">66</td>
+          <td class="val-pos">42</td>
+          <td class="val-pos">55</td>
+          <td>내부거래매출 기반</td>
+        </tr>
+        <tr>
+          <td>Defense Derby</td>
+          <td>기타</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td>운영 최소화</td>
+        </tr>
+        <tr>
+          <td><strong>합계 (법인)</strong></td>
+          <td></td>
+          <td class="val-neg"><strong>-4,071</strong></td>
+          <td class="val-pos"><strong>197</strong></td>
+          <td class="val-pos"><strong>200</strong></td>
+          <td class="val-pos"><strong>223</strong></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
-<!-- CASH FLOW TAB -->
-<div id="cf" class="tab-content">
-<div class="kpi-row">
-<div class="kpi-card"><div class="label">월말잔액</div><div class="value">43.4억</div><div class="change down">▼ 10.7억 vs 전월</div></div>
-<div class="kpi-card"><div class="label">현금유입</div><div class="value">3.0억</div><div class="change down">▼ 86.3% vs 전월</div></div>
-<div class="kpi-card"><div class="label">현금유출</div><div class="value">13.7억</div><div class="change up">▲ 44.2% vs 전월</div></div>
-<div class="kpi-card"><div class="label">현금순증감</div><div class="value" style="color:#e94560">-10.7억</div><div class="change down">적자전환 (전월 +12.3억)</div></div>
-</div>
-<div class="section">
-<h3>핵심 요약</h3>
-<p class="summary-text">4월 현금유입 3.0억원으로 전월(21.7억) 대비 대폭 감소. 3월에 발생한 개발협력 매출 17.6억의 일회성 유입이 소멸한 영향. 유출은 13.7억원으로 인건비(4.3억), 사무실 임차료(1.2억), 기타(6.4억) 등 정상 수준. 월말 현금잔액 43.4억원으로 안정적 수준 유지.</p>
-</div>
-<div class="section">
-<h3>자금 흐름 시각화</h3>
-<div class="flow-viz">
-<div class="flow-box"><div class="fv-label">전기이월</div><div class="fv-val">54.1억</div></div>
-<div class="flow-arrow">+</div>
-<div class="flow-box" style="background:#e8f5e9"><div class="fv-label">유입</div><div class="fv-val" style="color:#2ec4b6">3.0억</div></div>
-<div class="flow-arrow">−</div>
-<div class="flow-box" style="background:#fce4ec"><div class="fv-label">유출</div><div class="fv-val" style="color:#e94560">13.7억</div></div>
-<div class="flow-arrow">=</div>
-<div class="flow-box" style="background:#e3f2fd"><div class="fv-label">차기이월</div><div class="fv-val">43.4억</div></div>
-</div>
-</div>
-<div class="section">
-<h3>특이사항 및 분석</h3>
-<ul class="insight-list">
-<li>개발협력 매출 0.9억으로 전월(17.6억) 대비 급감 — 3월 분기 정산 이후 정상 수준 회복</li>
-<li>기타 유출 6.4억 — 상세 내역 확인 필요 (통상 1억 미만 수준에서 대폭 증가)</li>
-<li>인건비 유출 4.3억으로 전월(6.1억) 대비 29% 감소</li>
-<li>게임매출 입금: 골프킹 1.6억, 미니골프킹 1.0억, 개발협력 0.9억</li>
-<li>월말 잔액 43.4억은 월 고정비(~10억) 대비 약 4.3개월분 운영자금 확보 상태</li>
-</ul>
-</div>
-<div class="section">
-<h3>월별 자금수지 추이</h3>
-<div class="chart-container"><canvas id="cfTrendChart"></canvas></div>
-</div>
-<div class="section">
-<h3>월별 자금수지 상세 (단위: 억원)</h3>
-<div style="overflow-x:auto">
-<table>
-<thead><tr><th>구분</th><th>'26.1</th><th>'26.2</th><th>'26.3</th><th>'26.4</th></tr></thead>
-<tbody>
-<tr><td>전기이월</td><td>27.6</td><td>58.9</td><td>41.8</td><td>54.1</td></tr>
-<tr><td>현금유입</td><td class="positive">43.7</td><td class="positive">46.6</td><td class="positive">21.7</td><td class="positive">3.0</td></tr>
-<tr><td>　게임매출</td><td>2.4</td><td>46.5</td><td>20.6</td><td>3.5</td></tr>
-<tr><td>　　미니골프킹</td><td>0.8</td><td>1.1</td><td>1.2</td><td>1.0</td></tr>
-<tr><td>　　골프킹</td><td>1.5</td><td>1.8</td><td>1.7</td><td>1.6</td></tr>
-<tr><td>　　개발협력</td><td>0.0</td><td>43.6</td><td>17.6</td><td>0.9</td></tr>
-<tr><td>　기타수입</td><td>41.4</td><td>0.1</td><td>1.2</td><td>-0.5</td></tr>
-<tr><td>현금유출</td><td class="negative">12.4</td><td class="negative">63.7</td><td class="negative">9.5</td><td class="negative">13.7</td></tr>
-<tr><td>　인건비</td><td>8.9</td><td>60.8</td><td>6.1</td><td>4.3</td></tr>
-<tr><td>　임차료</td><td>1.2</td><td>1.3</td><td>1.3</td><td>1.2</td></tr>
-<tr><td>　지급수수료</td><td>0.8</td><td>0.4</td><td>0.4</td><td>0.8</td></tr>
-<tr><td>　광고비</td><td>0.9</td><td>0.9</td><td>0.7</td><td>0.6</td></tr>
-<tr><td>　이자비용</td><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td></tr>
-<tr><td>　기타</td><td>0.4</td><td>0.2</td><td>0.9</td><td>6.4</td></tr>
-<tr style="font-weight:700"><td>순증감</td>
-<td class="positive">+31.3</td><td class="negative">-17.1</td><td class="positive">+12.3</td><td class="negative">-10.7</td></tr>
-<tr style="font-weight:700;border-top:2px solid #16213e"><td>차기이월(월말잔액)</td><td>58.9</td><td>41.8</td><td>54.1</td><td>43.4</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section">
-<h3>4월 유입/유출 구성</h3>
-<div class="chart-row">
-<div><div class="chart-container"><canvas id="inflowDonut"></canvas></div></div>
-<div><div class="chart-container"><canvas id="outflowDonut"></canvas></div></div>
-</div>
-</div>
+<!-- ===== Cash Flow 탭 ===== -->
+<div id="tab-cf" class="tab-content">
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">월말잔액 (5월)</div>
+      <div class="kpi-value">44.2억</div>
+      <div class="kpi-change pos">▲ +1.9% vs 전월 (43.4억)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">현금유입 (5월)</div>
+      <div class="kpi-value">13.6억</div>
+      <div class="kpi-change pos">▲ +353% vs 전월 (3.0억)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">현금유출 (5월)</div>
+      <div class="kpi-value">12.8억</div>
+      <div class="kpi-change pos">▼ 6.3% vs 전월 (13.7억)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">현금순증감 (5월)</div>
+      <div class="kpi-value pos">+0.8억</div>
+      <div class="kpi-change pos">흑자 전환 (전월 -10.7억)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>핵심 요약</h3>
+    <div class="summary-box">
+      <p>2026년 5월 월말잔액 <strong>44.2억원</strong>으로 전월(43.4억) 대비 소폭 증가, 자금 안정세 회복. 개발협력 매출 입금(1,071백만원) 유입으로 현금흐름 흑자 전환(+0.8억).</p>
+      <p style="margin-top:6px;">4월 유입 급감(3.0억)은 개발협력 정산 타이밍 차이에 기인. 5월 개발협력 수입 107.1억원 입금으로 정상화. 인건비와 임차료 고정비 월 8~9억원 수준으로 안정적 유지.</p>
+    </div>
+    <ul class="issues-list">
+      <li class="good">5월 월말잔액 44.2억원 유지 — 약 3.5개월치 운영비(월 12~13억 기준) 확보.</li>
+      <li class="good">개발협력 수입 5월 107.1억원 입금으로 4월 급감(8.6억) 후 정상 회복.</li>
+      <li class="warn">4월 유입 3.0억원(전월 21.7억 대비 -86%) — 개발협력 입금 타이밍 변동성 리스크.</li>
+      <li class="warn">2월 유출 63.7억원 이상치 — 인건비 60.8억 일시 처리(연봉 조정 관련 추정) 발생.</li>
+      <li class="info">유출 구조: 인건비(45.6%) + 지급수수료(36.5%) + 임차료(9.5%) + 기타(8.4%) — 고정비 비중 높음.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>자금 흐름 (2026년 5월)</h3>
+    <div class="flow-viz">
+      <div class="flow-box carry">
+        <div class="fb-label">전기이월</div>
+        <div class="fb-value">43.4억</div>
+        <div class="fb-unit">전월 잔액</div>
+      </div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-box inflow">
+        <div class="fb-label">현금유입</div>
+        <div class="fb-value" style="color:#16a34a">13.6억</div>
+        <div class="fb-unit">개발협력 등</div>
+      </div>
+      <div class="flow-arrow">−</div>
+      <div class="flow-box outflow">
+        <div class="fb-label">현금유출</div>
+        <div class="fb-value" style="color:#dc2626">12.8억</div>
+        <div class="fb-unit">인건비·경비</div>
+      </div>
+      <div class="flow-arrow">=</div>
+      <div class="flow-box result">
+        <div class="fb-label" style="color:rgba(255,255,255,0.7)">차기이월</div>
+        <div class="fb-value">44.2억</div>
+        <div class="fb-unit" style="color:rgba(255,255,255,0.6)">월말잔액</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>월별 자금수지 추이 (2026년, 억원)</h3>
+    <canvas id="cfTrendChart"></canvas>
+  </div>
+
+  <div class="section">
+    <h3>월별 자금수지 상세 (억원)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>26년 1월</th>
+          <th>26년 2월</th>
+          <th>26년 3월</th>
+          <th>26년 4월</th>
+          <th>26년 5월</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>전기이월</td>
+          <td>27.6</td>
+          <td>58.9</td>
+          <td>41.8</td>
+          <td>54.1</td>
+          <td>43.4</td>
+        </tr>
+        <tr>
+          <td>현금유입 합계</td>
+          <td>43.7</td>
+          <td>46.6</td>
+          <td>21.7</td>
+          <td>3.0</td>
+          <td>13.6</td>
+        </tr>
+        <tr>
+          <td>└ 게임매출</td>
+          <td>2.4</td>
+          <td>46.5</td>
+          <td>20.6</td>
+          <td>3.5</td>
+          <td>13.1</td>
+        </tr>
+        <tr>
+          <td>└ 기타수입</td>
+          <td>41.4</td>
+          <td>0.1</td>
+          <td>1.2</td>
+          <td>-0.5</td>
+          <td>0.5</td>
+        </tr>
+        <tr>
+          <td>현금유출 합계</td>
+          <td>12.4</td>
+          <td>63.7</td>
+          <td>9.5</td>
+          <td>13.7</td>
+          <td>12.8</td>
+        </tr>
+        <tr>
+          <td>└ 인건비</td>
+          <td>8.9</td>
+          <td>60.8</td>
+          <td>6.1</td>
+          <td>4.3</td>
+          <td>5.8</td>
+        </tr>
+        <tr>
+          <td>└ 지급수수료</td>
+          <td>0.8</td>
+          <td>0.4</td>
+          <td>0.4</td>
+          <td>0.8</td>
+          <td>4.7</td>
+        </tr>
+        <tr>
+          <td>└ 임차료</td>
+          <td>1.2</td>
+          <td>1.3</td>
+          <td>1.3</td>
+          <td>1.2</td>
+          <td>1.2</td>
+        </tr>
+        <tr>
+          <td>└ 기타</td>
+          <td>1.5</td>
+          <td>1.2</td>
+          <td>1.7</td>
+          <td>7.4</td>
+          <td>1.1</td>
+        </tr>
+        <tr>
+          <td>현금순증감</td>
+          <td class="val-pos">+31.3</td>
+          <td class="val-neg">-17.1</td>
+          <td class="val-pos">+12.3</td>
+          <td class="val-neg">-10.7</td>
+          <td class="val-pos">+0.8</td>
+        </tr>
+        <tr>
+          <td><strong>차기이월(월말잔액)</strong></td>
+          <td><strong>58.9</strong></td>
+          <td><strong>41.8</strong></td>
+          <td><strong>54.1</strong></td>
+          <td><strong>43.4</strong></td>
+          <td><strong>44.2</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-grid-2">
+    <div class="section">
+      <h3>5월 유입 구성</h3>
+      <canvas id="inflowDonut"></canvas>
+    </div>
+    <div class="section">
+      <h3>5월 유출 구성</h3>
+      <canvas id="outflowDonut"></canvas>
+    </div>
+  </div>
+
 </div>
 
 <script>
-function switchTab(id){
-document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
-document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-event.target.classList.add('active');
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
 }
-const C1='#4361ee',C2='#f72585',C3='#2ec4b6',C4='#7c3aed',C5='#ff6b35',C6='#1d3557';
-Chart.defaults.font.family="'Segoe UI',Tahoma,sans-serif";
-Chart.defaults.font.size=12;
 
-// Corp P&L chart
-new Chart(document.getElementById('corpChart'),{type:'bar',data:{
-labels:["'25.11","'25.12","'26.1","'26.2","'26.3","'26.4"],
-datasets:[
-{label:'매출',data:[1227,1329,1232,1159,1322,1243],backgroundColor:C1,order:2},
-{label:'비용',data:[1274,1463,5303,962,1122,1020],backgroundColor:'rgba(247,37,133,0.6)',order:2},
-{label:'영업이익',data:[-47,-134,-4071,197,200,223],type:'line',borderColor:C3,backgroundColor:C3,pointRadius:5,pointBackgroundColor:C3,borderWidth:2.5,order:1,yAxisID:'y'}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
-scales:{y:{beginAtZero:false,ticks:{callback:v=>v+'M'}},x:{grid:{display:false}}}}});
+const MONTHS = ['25년11월','25년12월','26년1월','26년2월','26년3월','26년4월'];
+const COLORS = ['#4361ee','#f72585','#2ec4b6','#7c3aed','#f59e0b'];
 
-// Margin chart
-new Chart(document.getElementById('marginChart'),{type:'line',data:{
-labels:["'25.11","'25.12","'26.1","'26.2","'26.3","'26.4"],
-datasets:[{label:'영업이익률(%)',data:[-3.8,-10.1,-330.4,17.0,15.1,17.9],borderColor:C4,backgroundColor:'rgba(124,58,237,0.1)',fill:true,pointRadius:5,pointBackgroundColor:C4,tension:0.3}]
-},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-scales:{y:{ticks:{callback:v=>v+'%'},suggestedMin:-30,suggestedMax:25},x:{grid:{display:false}}}}});
+// P&L Trend Chart
+const plCtx = document.getElementById('plTrendChart').getContext('2d');
+new Chart(plCtx, {
+  type: 'bar',
+  data: {
+    labels: MONTHS,
+    datasets: [
+      {
+        label: '매출',
+        type: 'bar',
+        data: [1227, 1329, 1232, 1159, 1322, 1243],
+        backgroundColor: 'rgba(67,97,238,0.15)',
+        borderColor: '#4361ee',
+        borderWidth: 1.5,
+        yAxisID: 'y'
+      },
+      {
+        label: '비용(LTI제외)',
+        type: 'bar',
+        data: [1274, 1463, 1176, 962, 1122, 1020],
+        backgroundColor: 'rgba(247,37,133,0.15)',
+        borderColor: '#f72585',
+        borderWidth: 1.5,
+        yAxisID: 'y'
+      },
+      {
+        label: '영업이익(LTI제외)',
+        type: 'line',
+        data: [-47, -134, 56, 197, 200, 223],
+        borderColor: '#2ec4b6',
+        backgroundColor: 'rgba(46,196,182,0.1)',
+        borderWidth: 2.5,
+        pointRadius: 5,
+        pointBackgroundColor: '#2ec4b6',
+        tension: 0.3,
+        fill: false,
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.dataset.label + ': ' + ctx.raw.toLocaleString() + '백만원'
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '백만원' },
+        grid: { color: 'rgba(0,0,0,0.05)' }
+      }
+    }
+  }
+});
 
-// Project bar chart
-new Chart(document.getElementById('projChart'),{type:'bar',data:{
-labels:['Project A','GOLF KING','MINIGOLF KING'],
-datasets:[
-{label:'매출',data:[976,136,130],backgroundColor:C1},
-{label:'비용',data:[920,65,34],backgroundColor:'rgba(247,37,133,0.6)'},
-{label:'영업이익',data:[56,72,96],backgroundColor:C3}
-]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom'}},
-scales:{x:{ticks:{callback:v=>v+'M'}},y:{grid:{display:false}}}}});
+// Margin Trend Chart
+const marginCtx = document.getElementById('plMarginChart').getContext('2d');
+new Chart(marginCtx, {
+  type: 'line',
+  data: {
+    labels: MONTHS,
+    datasets: [{
+      label: '영업이익률(LTI제외)',
+      data: [-3.8, -10.1, 4.5, 17.0, 15.1, 17.9],
+      borderColor: '#7c3aed',
+      backgroundColor: 'rgba(124,58,237,0.1)',
+      borderWidth: 2.5,
+      pointRadius: 5,
+      pointBackgroundColor: '#7c3aed',
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: {
+        callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '%' },
+        grid: { color: 'rgba(0,0,0,0.05)' }
+      }
+    }
+  }
+});
 
-// Project trend
-new Chart(document.getElementById('projTrendChart'),{type:'line',data:{
-labels:["'26.1","'26.2","'26.3","'26.4"],
-datasets:[
-{label:'Project A',data:[-157,68,42,56],borderColor:C1,pointRadius:4,tension:0.3},
-{label:'GOLF KING',data:[158,74,84,72],borderColor:C2,pointRadius:4,tension:0.3},
-{label:'MINIGOLF KING',data:[55,57,74,96],borderColor:C3,pointRadius:4,tension:0.3}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
-scales:{y:{ticks:{callback:v=>v+'M'}},x:{grid:{display:false}}}}});
+// Revenue Mix Donut
+const revCtx = document.getElementById('revMixChart').getContext('2d');
+new Chart(revCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['내부거래(개발협력)', '모바일 게임', '광고/기타'],
+    datasets: [{
+      data: [976, 217, 50],
+      backgroundColor: ['#4361ee', '#f72585', '#2ec4b6'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.label + ': ' + ctx.raw + '백만원 (' + Math.round(ctx.raw/1243*100) + '%)'
+        }
+      }
+    }
+  }
+});
 
-// CF trend
-new Chart(document.getElementById('cfTrendChart'),{type:'bar',data:{
-labels:["'26.1","'26.2","'26.3","'26.4"],
-datasets:[
-{label:'현금유입',data:[43.7,46.6,21.7,3.0],backgroundColor:'rgba(46,196,182,0.7)',order:2},
-{label:'현금유출',data:[-12.4,-63.7,-9.5,-13.7],backgroundColor:'rgba(233,69,96,0.7)',order:2},
-{label:'월말잔액',data:[58.9,41.8,54.1,43.4],type:'line',borderColor:C1,pointRadius:5,pointBackgroundColor:C1,borderWidth:2.5,order:1}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
-scales:{y:{ticks:{callback:v=>v+'억'}},x:{grid:{display:false}}}}});
+// Project Bar Chart
+const pBarCtx = document.getElementById('projectBarChart').getContext('2d');
+new Chart(pBarCtx, {
+  type: 'bar',
+  data: {
+    labels: ['MINIGOLF KING', 'GOLF KING', '개발협력 기여', 'Defense Derby'],
+    datasets: [{
+      label: '26년 4월 영업이익(백만원)',
+      data: [96, 72, 55, 0],
+      backgroundColor: ['#2ec4b6', '#4361ee', '#7c3aed', '#e5e7eb'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.raw + '백만원' } }
+    },
+    scales: {
+      x: { title: { display: true, text: '백만원' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+    }
+  }
+});
 
-// Inflow donut
-new Chart(document.getElementById('inflowDonut'),{type:'doughnut',data:{
-labels:['골프킹','미니골프킹','개발협력','기타수입'],
-datasets:[{data:[160670846,99963434,85886238,-48117805].map(v=>Math.max(0,v/1e6)),
-backgroundColor:[C1,C2,C3,C4]}]
-},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'현금유입 구성',font:{size:14}},legend:{position:'bottom'}}}});
+// Project Trend Chart
+const pTrendCtx = document.getElementById('projectTrendChart').getContext('2d');
+new Chart(pTrendCtx, {
+  type: 'line',
+  data: {
+    labels: ['26.1','26.2','26.3','26.4'],
+    datasets: [
+      {
+        label: 'GOLF KING',
+        data: [158, 74, 84, 72],
+        borderColor: '#4361ee',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointRadius: 4,
+        tension: 0.3
+      },
+      {
+        label: 'MINIGOLF KING',
+        data: [55, 57, 74, 96],
+        borderColor: '#2ec4b6',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointRadius: 4,
+        tension: 0.3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + '백만원' } }
+    },
+    scales: {
+      y: { title: { display: true, text: '백만원' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+    }
+  }
+});
 
-// Outflow donut
-new Chart(document.getElementById('outflowDonut'),{type:'doughnut',data:{
-labels:['인건비','임차료','지급수수료','광고비','이자비용','기타'],
-datasets:[{data:[433420454,122523805,84262519,62617455,19827276,643033028].map(v=>v/1e6),
-backgroundColor:[C1,C2,C3,C4,C5,C6]}]
-},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'현금유출 구성',font:{size:14}},legend:{position:'bottom'}}}});
+// Cash Flow Trend Chart
+const cfCtx = document.getElementById('cfTrendChart').getContext('2d');
+new Chart(cfCtx, {
+  type: 'bar',
+  data: {
+    labels: ['26년1월','26년2월','26년3월','26년4월','26년5월'],
+    datasets: [
+      {
+        label: '현금유입',
+        data: [43.7, 46.6, 21.7, 3.0, 13.6],
+        backgroundColor: 'rgba(46,196,182,0.6)',
+        borderColor: '#2ec4b6',
+        borderWidth: 1,
+        stack: 'main'
+      },
+      {
+        label: '현금유출',
+        data: [-12.4, -63.7, -9.5, -13.7, -12.8],
+        backgroundColor: 'rgba(233,69,96,0.6)',
+        borderColor: '#e94560',
+        borderWidth: 1,
+        stack: 'main'
+      },
+      {
+        label: '월말잔액',
+        type: 'line',
+        data: [58.9, 41.8, 54.1, 43.4, 44.2],
+        borderColor: '#4361ee',
+        backgroundColor: 'transparent',
+        borderWidth: 2.5,
+        pointRadius: 5,
+        pointBackgroundColor: '#4361ee',
+        tension: 0.3,
+        yAxisID: 'y2'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + Math.abs(ctx.raw).toFixed(1) + '억원' } }
+    },
+    scales: {
+      y: { title: { display: true, text: '억원(유입/유출)' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y2: {
+        title: { display: true, text: '억원(잔액)' },
+        position: 'right',
+        grid: { drawOnChartArea: false }
+      }
+    }
+  }
+});
+
+// Inflow Donut (May)
+const inCtx = document.getElementById('inflowDonut').getContext('2d');
+new Chart(inCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['게임매출(개발협력)', '미니골프킹', '골프킹', '기타'],
+    datasets: [{
+      data: [107.1, 11.0, 12.8, 5.3],
+      backgroundColor: ['#4361ee','#2ec4b6','#f72585','#7c3aed'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.label + ': ' + ctx.raw.toFixed(1) + '억원'
+        }
+      }
+    }
+  }
+});
+
+// Outflow Donut (May)
+const outCtx = document.getElementById('outflowDonut').getContext('2d');
+new Chart(outCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['인건비', '지급수수료', '임차료', '광고비', '이자비용', '기타'],
+    datasets: [{
+      data: [58.3, 46.6, 12.2, 2.4, 1.9, 6.5],
+      backgroundColor: ['#4361ee','#f72585','#2ec4b6','#7c3aed','#f59e0b','#94a3b8'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.label + ': ' + ctx.raw.toFixed(1) + '백만원'
+        }
+      }
+    }
+  }
+});
 </script>
 </body>
 </html>
